@@ -3,19 +3,31 @@ import { SheetData } from './types';
 
 // Diccionario para mapear abreviaturas de meses a nombres completos
 const mesesMap: Record<string, string> = {
+    'enero': 'Enero',
     'ene': 'Enero',
+    'febrero': 'Febrero',
     'feb': 'Febrero',
+    'marzo': 'Marzo',
     'mar': 'Marzo',
+    'abril': 'Abril',
     'abr': 'Abril',
+    'mayo': 'Mayo',
     'may': 'Mayo',
+    'junio': 'Junio',
     'jun': 'Junio',
+    'julio': 'Julio',
     'jul': 'Julio',
+    'agosto': 'Agosto',
     'agto': 'Agosto',
     'ago': 'Agosto',
+    'septiembre': 'Septiembre',
     'sept': 'Septiembre',
     'sep': 'Septiembre',
+    'octubre': 'Octubre',
     'oct': 'Octubre',
+    'noviembre': 'Noviembre',
     'nov': 'Noviembre',
+    'diciembre': 'Diciembre',
     'dic': 'Diciembre'
 };
 
@@ -72,19 +84,38 @@ export function parseExcelFile(file: ArrayBuffer): SheetData[] {
 
         const worksheet = workbook.Sheets[sheetName];
 
-        // Convertir a JSON como objetos para mejor manejo de columnas
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+        // Intentar encontrar la columna de importes probando diferentes filas de encabezado
+        // Algunos sheets tienen headers en fila 1, otros en fila 2
+        let jsonData: any[] = [];
+        let columnaImporte: string | null = null;
 
-        if (jsonData.length === 0) {
-            continue;
+        // Intentar primero con range: 0 (headers en fila 1)
+        jsonData = XLSX.utils.sheet_to_json(worksheet, {
+            defval: null,
+            range: 0
+        });
+
+        if (jsonData.length > 0) {
+            const firstRow = jsonData[0] as Record<string, any>;
+            const columns = Object.keys(firstRow);
+            columnaImporte = encontrarColumnaImporte(columns);
         }
 
-        // Obtener las claves (columnas) del primer objeto
-        const firstRow = jsonData[0] as Record<string, any>;
-        const columns = Object.keys(firstRow);
-        const columnaImporte = encontrarColumnaImporte(columns);
-
+        // Si no se encontró, intentar con range: 1 (headers en fila 2)
         if (!columnaImporte) {
+            jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                defval: null,
+                range: 1
+            });
+
+            if (jsonData.length > 0) {
+                const firstRow = jsonData[0] as Record<string, any>;
+                const columns = Object.keys(firstRow);
+                columnaImporte = encontrarColumnaImporte(columns);
+            }
+        }
+
+        if (!columnaImporte || jsonData.length === 0) {
             continue; // Saltar si no hay columna de importes
         }
 
