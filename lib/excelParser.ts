@@ -49,7 +49,7 @@ function identificarMes(nombreHoja: string): string | null {
 function encontrarColumnaImporte(columns: string[]): string | null {
     for (const candidate of importeCandidates) {
         const found = columns.find(col =>
-            col.toLowerCase() === candidate.toLowerCase()
+            col && typeof col === 'string' && col.toLowerCase() === candidate.toLowerCase()
         );
         if (found) return found;
     }
@@ -71,27 +71,27 @@ export function parseExcelFile(file: ArrayBuffer): SheetData[] {
         }
 
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+
+        // Convertir a JSON como objetos para mejor manejo de columnas
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: null });
 
         if (jsonData.length === 0) {
             continue;
         }
 
-        // Obtener los encabezados (primera fila)
-        const headers = jsonData[0] as string[];
-        const columnaImporte = encontrarColumnaImporte(headers);
+        // Obtener las claves (columnas) del primer objeto
+        const firstRow = jsonData[0] as Record<string, any>;
+        const columns = Object.keys(firstRow);
+        const columnaImporte = encontrarColumnaImporte(columns);
 
         if (!columnaImporte) {
             continue; // Saltar si no hay columna de importes
         }
 
-        const importeIndex = headers.indexOf(columnaImporte);
-
         // Sumar todos los valores de la columna de importes
         let total = 0;
-        for (let i = 1; i < jsonData.length; i++) {
-            const row = jsonData[i];
-            const valor = row[importeIndex];
+        for (const row of jsonData) {
+            const valor = (row as Record<string, any>)[columnaImporte];
 
             if (typeof valor === 'number') {
                 total += valor;
