@@ -5,15 +5,27 @@ import { MonthlySummary, SheetData } from './types';
  * Ejemplo: 1234.56 -> "1.234,56"
  */
 export function formatoMonto(valor: number): string {
-    if (isNaN(valor) || valor === 0) {
+    if (isNaN(valor)) {
         return '0,00';
     }
 
-    return valor.toFixed(2)
-        .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-        .replace('.', 'X')
-        .replace(/\./g, ',')
-        .replace('X', '.');
+    if (valor === 0) {
+        return '0,00';
+    }
+
+    // Separar el signo si es negativo
+    const signo = valor < 0 ? '-' : '';
+    const valorAbs = Math.abs(valor);
+
+    // Formatear el número
+    const partes = valorAbs.toFixed(2).split('.');
+    const entero = partes[0];
+    const decimal = partes[1];
+
+    // Agregar separadores de miles
+    const enteroFormateado = entero.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    return `${signo}${enteroFormateado},${decimal}`;
 }
 
 /**

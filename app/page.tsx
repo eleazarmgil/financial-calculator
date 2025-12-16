@@ -4,12 +4,14 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import FileUpload from '@/components/FileUpload';
 import ResultsTable from '@/components/ResultsTable';
+import DataBreakdown from '@/components/DataBreakdown';
 import { parseExcelFile } from '@/lib/excelParser';
 import { calcularResumenMensual } from '@/lib/calculator';
-import { MonthlySummary } from '@/lib/types';
+import { MonthlySummary, SheetData } from '@/lib/types';
 
 export default function Home() {
     const [results, setResults] = useState<MonthlySummary[]>([]);
+    const [sheetData, setSheetData] = useState<SheetData[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -17,20 +19,24 @@ export default function Home() {
         setIsProcessing(true);
         setError(null);
         setResults([]);
+        setSheetData([]);
 
         try {
             // Leer el archivo como ArrayBuffer
             const arrayBuffer = await file.arrayBuffer();
 
             // Parsear el Excel
-            const sheetData = parseExcelFile(arrayBuffer);
+            const parsedSheetData = parseExcelFile(arrayBuffer);
 
-            if (sheetData.length === 0) {
+            if (parsedSheetData.length === 0) {
                 throw new Error('No se encontraron datos válidos en el archivo Excel');
             }
 
+            // Guardar los datos crudos
+            setSheetData(parsedSheetData);
+
             // Calcular el resumen mensual
-            const resumen = calcularResumenMensual(sheetData);
+            const resumen = calcularResumenMensual(parsedSheetData);
 
             if (resumen.length === 0) {
                 throw new Error('No se pudieron calcular los resultados. Verifica que el archivo tenga el formato correcto.');
@@ -78,6 +84,8 @@ export default function Home() {
                         </div>
                     </div>
                 )}
+
+                <DataBreakdown sheetData={sheetData} />
 
                 <ResultsTable data={results} />
 
