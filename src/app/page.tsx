@@ -62,10 +62,10 @@ export default function Home() {
                 />
 
                 {error && (
-                    <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-500/20 border border-red-500/50 rounded-lg backdrop-blur-sm">
+                    <div className="max-w-2xl mx-auto mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
                         <div className="flex items-start">
                             <svg
-                                className="w-6 h-6 text-red-300 mr-3 flex-shrink-0 mt-0.5"
+                                className="w-5 h-5 text-red-600 mr-3 flex-shrink-0 mt-0.5"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -78,8 +78,8 @@ export default function Home() {
                                 />
                             </svg>
                             <div>
-                                <h3 className="text-red-200 font-semibold mb-1">Error al procesar el archivo</h3>
-                                <p className="text-red-300 text-sm">{error}</p>
+                                <h3 className="text-red-800 font-semibold mb-1">Error al procesar el archivo</h3>
+                                <p className="text-red-700 text-sm">{error}</p>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@ export default function Home() {
 
                 {results.length === 0 && !error && !isProcessing && (
                     <div className="text-center mt-12">
-                        <p className="text-purple-200 text-lg">
+                        <p className="text-gray-600 text-lg">
                             📊 Sube un archivo Excel para comenzar el análisis
                         </p>
                     </div>

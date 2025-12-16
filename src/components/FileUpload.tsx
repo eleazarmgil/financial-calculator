@@ -49,14 +49,13 @@ export default function FileUpload({ onFileSelect, isProcessing }: FileUploadPro
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 className={`
-          relative border-2 border-dashed rounded-2xl p-12 text-center
-          transition-all duration-300 ease-in-out
+          relative border-2 border-dashed rounded-lg p-12 text-center
+          transition-all duration-200
           ${isDragging
-                        ? 'border-purple-300 bg-purple-500/20 scale-105'
-                        : 'border-purple-300/50 bg-white/10 hover:bg-white/15'
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-300 bg-white hover:border-gray-400'
                     }
           ${isProcessing ? 'opacity-50 pointer-events-none' : 'cursor-pointer'}
-          backdrop-blur-sm
         `}
             >
                 <input
@@ -70,7 +69,7 @@ export default function FileUpload({ onFileSelect, isProcessing }: FileUploadPro
 
                 <div className="pointer-events-none">
                     <svg
-                        className="mx-auto h-16 w-16 text-purple-200 mb-4"
+                        className="mx-auto h-12 w-12 text-gray-400 mb-4"
                         stroke="currentColor"
                         fill="none"
                         viewBox="0 0 48 48"
@@ -86,18 +85,18 @@ export default function FileUpload({ onFileSelect, isProcessing }: FileUploadPro
 
                     {isProcessing ? (
                         <div className="space-y-2">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
-                            <p className="text-white font-medium">Procesando archivo...</p>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                            <p className="text-gray-700 font-medium">Procesando archivo...</p>
                         </div>
                     ) : (
                         <>
-                            <p className="text-xl font-semibold text-white mb-2">
+                            <p className="text-lg font-semibold text-gray-900 mb-2">
                                 Arrastra tu archivo Excel aquí
                             </p>
-                            <p className="text-purple-200">
+                            <p className="text-gray-600">
                                 o haz clic para seleccionar
                             </p>
-                            <p className="text-sm text-purple-300 mt-3">
+                            <p className="text-sm text-gray-500 mt-3">
                                 Formatos soportados: .xlsx, .xls
                             </p>
                         </>
